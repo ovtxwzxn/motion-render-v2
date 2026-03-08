@@ -1,0 +1,28 @@
+name: ZeroTouchMotionRender
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  automation-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Generate Concept
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+        run: |
+          pip install requests
+          python generate_params.py
+      - name: Deploy to Kaggle
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          pip install kaggle
+          kaggle kernels push -p ./
